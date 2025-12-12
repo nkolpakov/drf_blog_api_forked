@@ -77,8 +77,8 @@ class ViewsTest(APITestCase):
         comment = Comment.objects.filter_by_instance(blog)
         serializer = serializers.CommentListSerializer(comment, many=True)
 
-        self.assertEquals(response.status_code, status.HTTP_200_OK)
-        self.assertEquals(response.data, serializer.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, serializer.data)
 
     def test_comment_create(self):
         path = reverse("comment:api:create")
@@ -89,7 +89,7 @@ class ViewsTest(APITestCase):
             path=path,
             data=serializer.data,
         )
-        self.assertEquals(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
         self.client.credentials(
             HTTP_AUTHORIZATION=f"Bearer {self.refresh_for_user1.access_token}"
@@ -98,8 +98,8 @@ class ViewsTest(APITestCase):
             path=path,
             data=serializer.data,
         )
-        self.assertEquals(response.status_code, status.HTTP_201_CREATED)
-        self.assertEquals(json.loads(response.content), self.valid_data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(json.loads(response.content), self.valid_data)
 
     def test_comment_create_with_invalid_data(self):
         path = reverse("comment:api:create")
@@ -112,7 +112,7 @@ class ViewsTest(APITestCase):
             path=path,
             data=data,
         )
-        self.assertEquals(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_comment_update(self):
         path = reverse("comment:api:update-delete", args=[self.comment1.pk])
@@ -123,7 +123,7 @@ class ViewsTest(APITestCase):
             path=path,
             data=serializer.data,
         )
-        self.assertEquals(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
         self.client.credentials(
             HTTP_AUTHORIZATION=f"Bearer {self.refresh_for_user1.access_token}"
@@ -132,8 +132,8 @@ class ViewsTest(APITestCase):
             path=path,
             data=serializer.data,
         )
-        self.assertEquals(response.status_code, status.HTTP_200_OK)
-        self.assertEquals(json.loads(response.content), self.updated_data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(json.loads(response.content), self.updated_data)
 
     def test_comment_update_with_invalid_data(self):
         path = reverse("comment:api:update-delete", args=[self.comment1.pk])
@@ -146,22 +146,22 @@ class ViewsTest(APITestCase):
             path=path,
             data=invalid_data,
         )
-        self.assertEquals(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_comment_delete(self):
         path = reverse("comment:api:update-delete", args=[self.comment1.pk])
 
         response = self.client.delete(path)
-        self.assertEquals(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
         self.client.credentials(
             HTTP_AUTHORIZATION=f"Bearer {self.refresh_for_user2.access_token}"
         )
         response = self.client.delete(path)
-        self.assertEquals(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
         self.client.credentials(
             HTTP_AUTHORIZATION=f"Bearer {self.refresh_for_user1.access_token}"
         )
         response = self.client.delete(path)
-        self.assertEquals(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)

@@ -21,20 +21,20 @@ class BlogTest(TestCase):
         )
 
     def test_str_method(self):
-        self.assertEquals(str(self.blog), f"{self.user.first_name} {self.blog.title}")
+        self.assertEqual(str(self.blog), f"{self.user.first_name} {self.blog.title}")
         self.assertNotEqual(str(self.blog), f"{self.user.first_name}")
 
     def test_fields_blog_model(self):
-        self.assertEquals(f"{self.blog.title}", "title-test-1")
+        self.assertEqual(f"{self.blog.title}", "title-test-1")
         self.assertTrue(self.blog.special, True)
-        self.assertNotEquals(self.blog.status, 'd')
+        self.assertNotEqual(self.blog.status, 'd')
 
     def test_is_generate_slug(self):
         self.assertIsNotNone(self.blog.slug)
 
     def test_the_profile_of_the_author_of_the_blog(self):
-        self.assertEquals(self.blog.author.phone, "98912888888")
-        self.assertNotEquals(self.blog.author.phone, "99999999999")
+        self.assertEqual(self.blog.author.phone, "98912888888")
+        self.assertNotEqual(self.blog.author.phone, "99999999999")
 
 
 class CategoryTest(TestCase):
@@ -53,19 +53,19 @@ class CategoryTest(TestCase):
         )
 
     def test_str_method(self):
-        self.assertEquals(str(self.category1), self.category1.title)
-        self.assertEquals(str(self.category2), self.category2.title)
+        self.assertEqual(str(self.category1), self.category1.title)
+        self.assertEqual(str(self.category2), self.category2.title)
 
     def test_fields_category1_model(self):
-        self.assertEquals(f"{self.category1.title}", "category test 1")
-        self.assertEquals(self.category1.slug, "category-test-1")
-        self.assertNotEquals(self.category1.status, False)
+        self.assertEqual(f"{self.category1.title}", "category test 1")
+        self.assertEqual(self.category1.slug, "category-test-1")
+        self.assertNotEqual(self.category1.status, False)
 
     def test_fields_category2_model(self):
-        self.assertEquals(f"{self.category2.title}", "category test 2")
-        self.assertEquals(self.category2.slug, "category-test-2")
-        self.assertNotEquals(self.category2.status, False)
+        self.assertEqual(f"{self.category2.title}", "category test 2")
+        self.assertEqual(self.category2.slug, "category-test-2")
+        self.assertNotEqual(self.category2.status, False)
 
     def test_parent_category(self):
         self.assertIsNone(self.category1.parent)
-        self.assertEquals(str(self.category2.parent), self.category1.title)
+        self.assertEqual(str(self.category2.parent), self.category1.title)

@@ -91,17 +91,17 @@ class BlogViewsTest(APITestCase):
         blogs = Blog.objects.publish()
         serializer = serializers.BlogsListSerializer(blogs, many=True)
 
-        self.assertEquals(response.status_code, status.HTTP_200_OK)
-        self.assertEquals(serializer.data, response.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(serializer.data, response.data)
 
     def test_search_blogs_list(self):
         response = self.client.get(reverse("blog:api:list") + "?search=test")
         content = json.loads(response.content)
-        self.assertEquals(len(content), 2)
+        self.assertEqual(len(content), 2)
 
         response = self.client.get(reverse("blog:api:list") + "?search=1234")
         content = json.loads(response.content)
-        self.assertNotEquals(len(content), 1)
+        self.assertNotEqual(len(content), 1)
 
     def test_blog_create_with_user1(self):
         self.client.credentials(
@@ -116,8 +116,8 @@ class BlogViewsTest(APITestCase):
         )
         content = json.loads(response.content)
 
-        self.assertEquals(response.status_code, status.HTTP_201_CREATED)
-        self.assertEquals(content.get("status"), self.valid_data.get("status"))
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(content.get("status"), self.valid_data.get("status"))
         self.assertTrue(content.get("special"))
 
     def test_blog_create_with_user2(self):
@@ -133,8 +133,8 @@ class BlogViewsTest(APITestCase):
         )
         content = json.loads(response.content)
 
-        self.assertEquals(response.status_code, status.HTTP_201_CREATED)
-        self.assertEquals(content.get("status"), "d")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(content.get("status"), "d")
         self.assertFalse(content.get("special"))
 
     def test_blog_create_with_user3(self):
@@ -149,18 +149,18 @@ class BlogViewsTest(APITestCase):
             data=serializer.data,
         )
 
-        self.assertEquals(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_blog_like(self):
         path = reverse("blog:api:like", args=[self.blog1.pk])
         response = self.client.get(path=path)
-        self.assertEquals(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
         self.client.credentials(
             HTTP_AUTHORIZATION=f"Bearer {self.refresh_for_user2.access_token}"
         )
         response = self.client.get(path=path)
-        self.assertEquals(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertQuerysetEqual(self.user2.blogs_like.all(), [self.blog1])
 
         response = self.client.get(path=path)
@@ -172,12 +172,12 @@ class BlogViewsTest(APITestCase):
         blog = Blog.objects.publish().get(slug=self.blog1.slug)
         serializer = serializers.BlogDetailUpdateDeleteSerializer(blog)
 
-        self.assertEquals(response.status_code, status.HTTP_200_OK)
-        self.assertEquals(response.data, serializer.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, serializer.data)
 
         path = reverse("blog:api:detail", kwargs={"slug": "test"})
         response = self.client.get(path=path)
-        self.assertEquals(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_blog_update_with_user1(self):
         path = reverse("blog:api:detail", kwargs={"slug": self.blog1.slug})
@@ -191,8 +191,8 @@ class BlogViewsTest(APITestCase):
         )
         content = json.loads(response.content)
 
-        self.assertEquals(response.status_code, status.HTTP_200_OK)
-        self.assertEquals(content.get("title"), self.updated_data.get("title"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(content.get("title"), self.updated_data.get("title"))
 
     def test_blog_update_with_user2(self):
         path = reverse("blog:api:detail", kwargs={"slug": self.blog1.slug})
@@ -204,7 +204,7 @@ class BlogViewsTest(APITestCase):
             data=self.updated_data,
         )
 
-        self.assertEquals(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
         path = reverse("blog:api:detail", kwargs={"slug": self.blog2.slug})
         response = self.client.put(
@@ -213,8 +213,8 @@ class BlogViewsTest(APITestCase):
         )
         content = json.loads(response.content)
 
-        self.assertEquals(response.status_code, status.HTTP_200_OK)
-        self.assertEquals(content.get("status"), "d")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(content.get("status"), "d")
 
     def test_blog_update_with_user3(self):
         path = reverse("blog:api:detail", kwargs={"slug": self.blog1.slug})
@@ -225,7 +225,7 @@ class BlogViewsTest(APITestCase):
             path=path,
             data=self.updated_data,
         )
-        self.assertEquals(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
         path = reverse("blog:api:detail", kwargs={"slug": self.blog2.slug})
         self.client.credentials(
@@ -235,7 +235,7 @@ class BlogViewsTest(APITestCase):
             path=path,
             data=self.updated_data,
         )
-        self.assertEquals(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_blog_delete_with_user1(self):
         path = reverse("blog:api:detail", kwargs={"slug": self.blog1.slug})
@@ -246,7 +246,7 @@ class BlogViewsTest(APITestCase):
         response = self.client.delete(
             path=path,
         )
-        self.assertEquals(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
     def test_blog_delete_with_user2(self):
         path = reverse("blog:api:detail", kwargs={"slug": self.blog1.slug})
@@ -257,7 +257,7 @@ class BlogViewsTest(APITestCase):
         response = self.client.delete(
             path=path,
         )
-        self.assertEquals(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_blog_delete_with_user3(self):
         path = reverse("blog:api:detail", kwargs={"slug": self.blog1.slug})
@@ -268,7 +268,7 @@ class BlogViewsTest(APITestCase):
         response = self.client.delete(
             path=path,
         )
-        self.assertEquals(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class CategoryViewsTest(APITestCase):
@@ -309,13 +309,13 @@ class CategoryViewsTest(APITestCase):
         blogs = category.blogs.publish()
         serializer = serializers.BlogsListSerializer(blogs, many=True)
 
-        self.assertEquals(response.status_code, status.HTTP_200_OK)
-        self.assertEquals(response.data, serializer.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, serializer.data)
 
     def test_category_list(self):
         response = self.client.get(reverse("blog:api:category-list"))
         category = Category.objects.active()
         serializer = serializers.CategoryListSerializer(category, many=True)
 
-        self.assertEquals(response.status_code, status.HTTP_200_OK)
-        self.assertEquals(response.data, serializer.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, serializer.data)

@@ -41,18 +41,18 @@ class CommentTest(TestCase):
         )
 
     def test_str_method(self):
-        self.assertEquals(str(self.comment1), self.user.phone)
-        self.assertEquals(str(self.comment2), self.user.phone)
-        self.assertNotEquals(str(self.comment1), self.user.first_name)
+        self.assertEqual(str(self.comment1), self.user.phone)
+        self.assertEqual(str(self.comment2), self.user.phone)
+        self.assertNotEqual(str(self.comment1), self.user.first_name)
 
     def test_comment1_instance(self):
-        self.assertEquals(self.comment1.body, "test-body-1")
-        self.assertEquals(self.comment1.user, self.user)
+        self.assertEqual(self.comment1.body, "test-body-1")
+        self.assertEqual(self.comment1.user, self.user)
         self.assertIsNone(self.comment1.parent)
 
     def test_comment2_instance(self):
-        self.assertEquals(self.comment2.body, "test-body-2")
-        self.assertEquals(self.comment2.user, self.user)
+        self.assertEqual(self.comment2.body, "test-body-2")
+        self.assertEqual(self.comment2.user, self.user)
         self.assertIsNotNone(self.comment2.parent)
 
     def test_model_manager(self):

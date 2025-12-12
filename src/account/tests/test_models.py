@@ -23,8 +23,8 @@ class UserTest(TestCase):
         )
 
     def test_str_method(self):
-        self.assertEquals(str(self.user), self.user.phone)
-        self.assertEquals(str(self.superuser), self.superuser.phone)
+        self.assertEqual(str(self.user), self.user.phone)
+        self.assertEqual(str(self.superuser), self.superuser.phone)
 
     def test_get_full_name(self):
         self.assertEqual(
