@@ -59,7 +59,7 @@ class ViewsTest(APITestCase):
         )
         response = self.client.get(reverse("account:api:users-list"))
 
-        self.assertEquals(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_users_list_with_author(self):
         self.client.credentials(
@@ -67,7 +67,7 @@ class ViewsTest(APITestCase):
         )
         response = self.client.get(reverse("account:api:users-list"))
 
-        self.assertEquals(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_users_list_with_superuser(self):
         self.client.credentials(
@@ -77,8 +77,8 @@ class ViewsTest(APITestCase):
         users = get_user_model().objects.all()
         serializer = serializers.UsersListSerializer(users, many=True)
 
-        self.assertEquals(response.status_code, status.HTTP_200_OK)
-        self.assertEquals(response.data, serializer.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, serializer.data)
 
     def test_search_users_list(self):
         self.client.credentials(
@@ -88,16 +88,16 @@ class ViewsTest(APITestCase):
 
         response = self.client.get(path + "?ordering=-id&search=wrong+search")
         content = json.loads(response.content)
-        self.assertEquals(len(content), 0)
+        self.assertEqual(len(content), 0)
 
         response = self.client.get(path + "?ordering=-id&search=test-user")
         content = json.loads(response.content)
-        self.assertEquals(len(content), 1)
+        self.assertEqual(len(content), 1)
 
         response = self.client.get(path + "?ordering=id&author=true")
         content, data = json.loads(response.content), response.data
-        self.assertEquals(len(content), 1)
-        self.assertEquals(data[0]["phone"], self.author.phone)
+        self.assertEqual(len(content), 1)
+        self.assertEqual(data[0]["phone"], self.author.phone)
 
     def test_users_detail(self):
         self.client.credentials(
@@ -109,17 +109,17 @@ class ViewsTest(APITestCase):
         user = get_user_model().objects.get(pk=self.user.pk)
         serializer = serializers.UserDetailUpdateDeleteSerializer(user)
 
-        self.assertEquals(response.status_code, status.HTTP_200_OK)
-        self.assertEquals(response.data, serializer.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, serializer.data)
 
         path = reverse("account:api:users-detail", kwargs={"pk": "0"})
         response = self.client.get(path=path)
-        self.assertEquals(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_get_profile(self):
         path = reverse("account:api:profile")
         response = self.client.get(path)
-        self.assertEquals(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
         self.client.credentials(
             HTTP_AUTHORIZATION=f"Bearer {self.refresh_for_user.access_token}"
@@ -127,8 +127,8 @@ class ViewsTest(APITestCase):
         response = self.client.get(path)
         serializer = serializers.UserProfileSerializer(self.user)
 
-        self.assertEquals(response.status_code, status.HTTP_200_OK)
-        self.assertEquals(response.data, serializer.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, serializer.data)
 
     def test_update_profile(self):
         path = reverse("account:api:profile")
@@ -146,8 +146,8 @@ class ViewsTest(APITestCase):
         )
         content = json.loads(response.content)
 
-        self.assertEquals(response.status_code, status.HTTP_200_OK)
-        self.assertEquals(content.get("first_name"), updated_data.get("first_name"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(content.get("first_name"), updated_data.get("first_name"))
 
     def test_login_with_invalid_phone(self):
         path = reverse("account:api:login")
@@ -156,7 +156,7 @@ class ViewsTest(APITestCase):
             data=self.invalid_phone,
         )
 
-        self.assertEquals(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_login_with_unavailable_number(self):
         path = reverse("account:api:login")
@@ -165,7 +165,7 @@ class ViewsTest(APITestCase):
             data=self.new_phone,
         )
 
-        self.assertEquals(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_login_with_user(self):
         path = reverse("account:api:login")
@@ -185,7 +185,7 @@ class ViewsTest(APITestCase):
             path=path,
             data=wrong_otp_code,
         )
-        self.assertEquals(response.status_code, status.HTTP_406_NOT_ACCEPTABLE)
+        self.assertEqual(response.status_code, status.HTTP_406_NOT_ACCEPTABLE)
 
         response = self.client.post(
             path=path,
@@ -193,7 +193,7 @@ class ViewsTest(APITestCase):
         )
         content = json.loads(response.content)
 
-        self.assertEquals(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(content["refresh"], content["access"])
         self.assertFalse(content["created"])
 
@@ -219,7 +219,7 @@ class ViewsTest(APITestCase):
             path=path,
             data=otp_code,
         )
-        self.assertEquals(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         path = reverse("account:api:verify-two-step-password")
         wrong_two_step_password = {
@@ -230,7 +230,7 @@ class ViewsTest(APITestCase):
             path=path,
             data=wrong_two_step_password,
         )
-        self.assertEquals(response.status_code, status.HTTP_406_NOT_ACCEPTABLE)
+        self.assertEqual(response.status_code, status.HTTP_406_NOT_ACCEPTABLE)
 
         two_step_password = {
             "password": "test",
@@ -242,7 +242,7 @@ class ViewsTest(APITestCase):
         )
         content = json.loads(response.content)
 
-        self.assertEquals(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(content["refresh"], content["access"])
 
     def test_throttling_login_view(self):
@@ -253,7 +253,7 @@ class ViewsTest(APITestCase):
                 data=self.user_phone,
             )
 
-        self.assertEquals(response.status_code, status.HTTP_429_TOO_MANY_REQUESTS)
+        self.assertEqual(response.status_code, status.HTTP_429_TOO_MANY_REQUESTS)
 
     def test_valid_otp_code(self):
         path = reverse("account:api:verify-otp")
@@ -265,7 +265,7 @@ class ViewsTest(APITestCase):
             data=data,
         )
 
-        self.assertEquals(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_register_with_invalid_phone(self):
         path = reverse("account:api:register")
@@ -274,7 +274,7 @@ class ViewsTest(APITestCase):
             data=self.invalid_phone,
         )
 
-        self.assertEquals(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_register_with_exists_phone(self):
         path = reverse("account:api:register")
@@ -283,7 +283,7 @@ class ViewsTest(APITestCase):
             data=self.user_phone,
         )
 
-        self.assertEquals(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_register_with_new_phone(self):
         path = reverse("account:api:register")
@@ -302,7 +302,7 @@ class ViewsTest(APITestCase):
         )
         content = json.loads(response.content)
 
-        self.assertEquals(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(content["refresh"], content["access"])
         self.assertTrue(content["created"])
 
@@ -314,7 +314,7 @@ class ViewsTest(APITestCase):
                 data=self.new_phone,
             )
 
-        self.assertEquals(response.status_code, status.HTTP_429_TOO_MANY_REQUESTS)
+        self.assertEqual(response.status_code, status.HTTP_429_TOO_MANY_REQUESTS)
 
     def test_throttling_verify_otp_view(self):
         path = reverse("account:api:verify-otp")
@@ -327,7 +327,7 @@ class ViewsTest(APITestCase):
                 data=otp_code,
             )
 
-        self.assertEquals(response.status_code, status.HTTP_429_TOO_MANY_REQUESTS)
+        self.assertEqual(response.status_code, status.HTTP_429_TOO_MANY_REQUESTS)
 
     def test_create_two_step_password_with_simple_password(self):
         self.client.credentials(
@@ -344,7 +344,7 @@ class ViewsTest(APITestCase):
             data=data,
         )
 
-        self.assertEquals(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_create_and_change_two_step_password_with_user(self):
         self.client.credentials(
@@ -360,7 +360,7 @@ class ViewsTest(APITestCase):
             path=path,
             data=data,
         )
-        self.assertEquals(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         path = reverse("account:api:change-two-step-password")
         change_password = {
@@ -372,7 +372,7 @@ class ViewsTest(APITestCase):
             path=path,
             data=change_password,
         )
-        self.assertEquals(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_validation_create_two_step_password(self):
         self.client.credentials(
@@ -389,7 +389,7 @@ class ViewsTest(APITestCase):
             data=data,
         )
 
-        self.assertEquals(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_delete_account(self):
         self.client.credentials(
@@ -401,7 +401,7 @@ class ViewsTest(APITestCase):
             path=path,
         )
 
-        self.assertEquals(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
     def test_delete_account_with_two_step_password(self):
         self.user.set_password("test")
@@ -416,7 +416,7 @@ class ViewsTest(APITestCase):
         response = self.client.delete(
             path=path,
         )
-        self.assertEquals(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
         wrong_data = {
             "password": "1234",
@@ -426,7 +426,7 @@ class ViewsTest(APITestCase):
             path=path,
             data=wrong_data,
         )
-        self.assertEquals(response.status_code, status.HTTP_406_NOT_ACCEPTABLE)
+        self.assertEqual(response.status_code, status.HTTP_406_NOT_ACCEPTABLE)
 
         data = {
             "password": "test",
@@ -436,4 +436,4 @@ class ViewsTest(APITestCase):
             path=path,
             data=data,
         )
-        self.assertEquals(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)

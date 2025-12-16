@@ -348,3 +348,4 @@ pip-selfcheck.json
 
 ### idea
 .idea
+/src/static/
